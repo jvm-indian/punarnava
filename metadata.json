@@ -1,0 +1,6 @@
+{
+  "name": "PUNARNAVA: Kabadiwala Connect & Scrap Marketplace",
+  "description": "Connecting informal scrap collectors with citizens and industrial recyclers. Features live scrap price board, doorstep pickup dispatch, Bluetooth scale simulation, route optimizer, EPR credits, and tri-role dashboards for Citizens, Kabadiwalas, and Admin.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

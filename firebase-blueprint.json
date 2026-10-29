@@ -1,0 +1,113 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Represents an authenticated participant in the PUNARNAVA ecosystem (Citizen, Kabadiwala, or Admin)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique user or auth UID" },
+        "name": { "type": "string", "description": "Full name of the user" },
+        "email": { "type": "string", "description": "Email address" },
+        "phone": { "type": "string", "description": "Contact mobile number" },
+        "role": { "type": "string", "enum": ["citizen", "kabadiwala", "admin"], "description": "Strict partner role for dashboard access" },
+        "vehicleType": { "type": "string", "description": "Type of vehicle for Kabadiwalas" },
+        "vehiclePlate": { "type": "string", "description": "Vehicle registration plate" },
+        "aadhaarMasked": { "type": "string", "description": "Masked Aadhaar identification" },
+        "kycStatus": { "type": "string", "enum": ["verified", "pending", "action_required"], "description": "KYC badge verification status" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of registration" }
+      },
+      "required": ["id", "name", "role", "createdAt"]
+    },
+    "Pickup": {
+      "title": "Pickup",
+      "description": "Doorstep dry waste collection order",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique pickup request ID" },
+        "customerName": { "type": "string", "description": "Name of citizen seller" },
+        "customerPhone": { "type": "string", "description": "Citizen phone number" },
+        "customerAddress": { "type": "string", "description": "Doorstep collection address" },
+        "preferredSlot": { "type": "string", "description": "Time slot requested" },
+        "status": { "type": "string", "enum": ["requested", "assigned", "in_progress", "arrived", "completed", "cancelled"], "description": "Lifecycle status" },
+        "otp": { "type": "string", "description": "4-digit verification code" },
+        "collectorId": { "type": "string", "description": "Assigned Kabadiwala ID" },
+        "totalEstimatedValue": { "type": "number", "description": "Estimated cashout" },
+        "finalPayout": { "type": "number", "description": "Verified weighed payout disbursed" },
+        "rating": { "type": "number", "description": "Star rating given by customer (1-5)" },
+        "review": { "type": "string", "description": "Citizen review comments" },
+        "feedbackTags": { "type": "array", "items": { "type": "string" }, "description": "Praise tags" },
+        "ratedAt": { "type": "string", "description": "Timestamp when rated" },
+        "createdAt": { "type": "string", "description": "Timestamp created" }
+      },
+      "required": ["id", "customerName", "status", "otp", "createdAt"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Doorstep Kabadiwala pickup rating and feedback submitted by a citizen",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique review ID" },
+        "pickupId": { "type": "string", "description": "Pickup order reference" },
+        "collectorId": { "type": "string", "description": "Rated Kabadiwala partner ID" },
+        "collectorName": { "type": "string", "description": "Name of the collector partner" },
+        "citizenName": { "type": "string", "description": "Name of citizen leaving review" },
+        "rating": { "type": "number", "description": "Star rating (1 to 5)" },
+        "feedback": { "type": "string", "description": "Detailed review feedback" },
+        "tags": { "type": "array", "items": { "type": "string" }, "description": "Service praise tags" },
+        "tipAmount": { "type": "number", "description": "Optional green appreciation tip in INR" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" }
+      },
+      "required": ["id", "pickupId", "collectorId", "rating", "citizenName", "createdAt"]
+    },
+    "Collector": {
+      "title": "Collector",
+      "description": "Verified Kabadiwala partner public profile and rating ledger",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Collector ID" },
+        "name": { "type": "string", "description": "Collector full name" },
+        "rating": { "type": "number", "description": "Aggregated verified rating (e.g. 4.92)" },
+        "totalReviews": { "type": "number", "description": "Total customer review count" },
+        "totalPickups": { "type": "number", "description": "Total completed doorstep pickups" },
+        "badgeTier": { "type": "string", "description": "Partner badge certification" }
+      },
+      "required": ["id", "name", "rating", "totalReviews"]
+    },
+    "ScrapRate": {
+      "title": "ScrapRate",
+      "description": "Spot scrap prices per category",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Item ID" },
+        "name": { "type": "string", "description": "Material name" },
+        "category": { "type": "string", "description": "Paper, Plastics, Metals, EWaste, Glass" },
+        "price": { "type": "number", "description": "Current price in rupees" },
+        "unit": { "type": "string", "description": "kg or pc" },
+        "change24h": { "type": "number", "description": "24h percentage fluctuation" }
+      },
+      "required": ["id", "name", "price", "unit"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profile with role access permissions"
+    },
+    "/pickups/{pickupId}": {
+      "schema": { "$ref": "#/entities/Pickup" },
+      "description": "Doorstep scrap orders"
+    },
+    "/reviews/{reviewId}": {
+      "schema": { "$ref": "#/entities/Review" },
+      "description": "Citizen pickup reviews and star ratings"
+    },
+    "/collectors/{collectorId}": {
+      "schema": { "$ref": "#/entities/Collector" },
+      "description": "Verified Kabadiwala partner ratings and profile metrics"
+    },
+    "/scrap_rates/{rateId}": {
+      "schema": { "$ref": "#/entities/ScrapRate" },
+      "description": "Official refinery backed scrap rates"
+    }
+  }
+}
